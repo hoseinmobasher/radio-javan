@@ -1,9 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:radio_javan/api/api.dart';
-import 'package:radio_javan/domain/playlist.dart';
-import 'package:radio_javan/pages/playlist_page.dart';
+import 'package:radio_javan/pages/tabs/music_tab.dart';
+import 'package:radio_javan/pages/tabs/playlist_tab.dart';
+import 'package:radio_javan/pages/tabs/queue_tab.dart';
 
 class HomePage extends StatefulWidget {
   static final routeName = '/homePage';
@@ -12,62 +10,65 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  List<Playlist> items = List();
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
+  TabController _controller;
 
-  final _refreshController = RefreshController(
-    initialRefresh: true,
-  );
-
-  void _onRefresh() async {
-    var playlist = await Api.instance.getPlaylist();
-    items.clear();
-    items.addAll(playlist);
-
-    if (mounted) {
-      setState(() {});
-    }
-
-    _refreshController.refreshCompleted();
+  @override
+  void initState() {
+    super.initState();
+    _controller = TabController(length: 3, initialIndex: 0, vsync: this);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Radio Javan')),
-      body: SmartRefresher(
-        header: WaterDropMaterialHeader(),
-        controller: _refreshController,
-        onRefresh: _onRefresh,
-        enablePullDown: true,
-        child: GridView.builder(
-          physics: ClampingScrollPhysics(),
-          gridDelegate:
-              SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
-          itemBuilder: (context, index) => GestureDetector(
-            onTap: () async {
-              await Navigator.of(context).pushNamed(
-                PlaylistPage.routeName,
-                arguments: items[index],
-              );
-            },
-            child: Hero(
-              tag: 'playlist-${items[index].url}',
-              child: SizedBox(
-                child: Card(
-                  elevation: 4.0,
-                  child: CachedNetworkImage(
-                    imageUrl: items[index].image,
-                    placeholder: (context, url) => Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
-                ),
+      appBar: AppBar(
+        title: Image.asset('assets/images/logo.png', height: 32),
+      ),
+      body: TabBarView(
+        controller: _controller,
+        children: [PlaylistTab(), MusicTab(), QueueTab()],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(
+              tooltip: 'Playlists',
+              icon: Icon(
+                Icons.library_music_outlined,
+                color: _controller.index == 0 ? Colors.red : Colors.black,
               ),
+              onPressed: () {
+                _controller.index = 0;
+                setState(() {});
+              },
             ),
-          ),
-          itemCount: items.length,
+            IconButton(
+              tooltip: 'Musics',
+              icon: Icon(
+                Icons.music_note_outlined,
+                color: _controller.index == 1 ? Colors.red : Colors.black,
+              ),
+              onPressed: () {
+                _controller.index = 1;
+                setState(() {});
+              },
+            ),
+            IconButton(
+              tooltip: 'My Library',
+              icon: Icon(
+                Icons.my_library_music_rounded,
+                color: _controller.index == 2 ? Colors.red : Colors.black,
+              ),
+              onPressed: () {
+                _controller.index = 2;
+                setState(() {});
+              },
+            )
+          ],
         ),
       ),
     );
