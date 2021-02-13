@@ -2,8 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
-import 'package:radio_javan/provider/music_action.dart';
 import 'package:radio_javan/provider/queue_provider.dart';
+import 'package:radio_javan/types/music_action.dart';
 import 'package:radio_javan/utils/dialog_utils.dart';
 
 class QueueTab extends StatefulWidget {
@@ -13,8 +13,21 @@ class QueueTab extends StatefulWidget {
 
 class _QueueTabState extends State<QueueTab>
     with AutomaticKeepAliveClientMixin {
-  _mediaActionPressed(MusicAction action) {
+  _mediaActionPressed(QueueProvider provider, MusicAction action) {
+    switch (action) {
+      case MusicAction.PLAY:
+        break;
+      case MusicAction.PAUSE:
+        break;
+      case MusicAction.NEXT:
+        break;
+      case MusicAction.PREVIOUS:
+        break;
+      case MusicAction.STOP:
+        break;
+    }
 
+    provider.action = action;
   }
 
   @override
@@ -25,37 +38,50 @@ class _QueueTabState extends State<QueueTab>
           alignment: MainAxisAlignment.spaceAround,
           children: [
             IconButton(
-                onPressed: () => _mediaActionPressed(MusicAction.PREVIOUS),
-                icon: Icon(
-                  Icons.skip_previous_outlined,
-                  color: value.action == MusicAction.PREVIOUS
-                      ? Colors.red
-                      : Colors.black,
-                )),
+              onPressed: () => _mediaActionPressed(value, MusicAction.PREVIOUS),
+              icon: Icon(
+                Icons.skip_previous_outlined,
+                color: value.action == MusicAction.PREVIOUS
+                    ? Colors.red
+                    : Colors.black,
+              ),
+            ),
             IconButton(
-                onPressed: () => _mediaActionPressed(MusicAction.PLAY),
-                icon: Icon(
-                  Icons.play_arrow_outlined,
-                  color: value.action == MusicAction.PLAY
-                      ? Colors.red
-                      : Colors.black,
-                )),
+              onPressed: () => _mediaActionPressed(value, MusicAction.PAUSE),
+              icon: Icon(
+                Icons.pause_outlined,
+                color: value.action == MusicAction.PAUSE
+                    ? Colors.red
+                    : Colors.black,
+              ),
+            ),
             IconButton(
-                onPressed: () => _mediaActionPressed(MusicAction.PAUSE),
-                icon: Icon(
-                  Icons.pause_outlined,
-                  color: value.action == MusicAction.PAUSE
-                      ? Colors.red
-                      : Colors.black,
-                )),
+              onPressed: () => _mediaActionPressed(value, MusicAction.PLAY),
+              icon: Icon(
+                Icons.play_arrow_outlined,
+                color: value.action == MusicAction.PLAY
+                    ? Colors.red
+                    : Colors.black,
+              ),
+            ),
             IconButton(
-                onPressed: () => _mediaActionPressed(MusicAction.NEXT),
-                icon: Icon(
-                  Icons.skip_next_outlined,
-                  color: value.action == MusicAction.NEXT
-                      ? Colors.red
-                      : Colors.black,
-                ))
+              onPressed: () => _mediaActionPressed(value, MusicAction.STOP),
+              icon: Icon(
+                Icons.stop_outlined,
+                color: value.action == MusicAction.STOP
+                    ? Colors.red
+                    : Colors.black,
+              ),
+            ),
+            IconButton(
+              onPressed: () => _mediaActionPressed(value, MusicAction.NEXT),
+              icon: Icon(
+                Icons.skip_next_outlined,
+                color: value.action == MusicAction.NEXT
+                    ? Colors.red
+                    : Colors.black,
+              ),
+            )
           ],
         ),
         body: ListView.builder(

@@ -26,7 +26,7 @@ class Api {
     print('Loading playlist...');
 
     var response =
-    await http.get('$baseUrl/playlists').timeout(Duration(seconds: 10));
+        await http.get('$baseUrl/playlists').timeout(Duration(seconds: 10));
     if (response.statusCode == 200) {
       XPath.source(response.body)
           .query("//div[@id='playlists']/div[@class='grid']/a")
@@ -36,7 +36,7 @@ class Api {
         String image = XPath.source(item).query("//a/img/@src").get();
         String name = XPath.source(item)
             .query(
-            "//a/div[@class='songInfo]/span[@class='playlistName']/text()")
+                "//a/div[@class='songInfo]/span[@class='playlistName']/text()")
             .get();
 
         items.add(Playlist('$baseUrl/$url', image, name));
@@ -120,15 +120,17 @@ class Api {
     if (response.statusCode == 200) {
       for (var item in XPath.source(response.body)
           .query(
-          "//div[@id='trending_featured_latest']/div/div[@class='tabs-content']/div[@id='panel2-1']/div/div")
+              "//div[@id='trending_featured_latest']/div/div[@class='tabs-content']/div[@id='panel2-1']/div/div")
           .list()) {
         var song = Song(
             '$baseUrl${XPath.source(item).query("//div/a/@href").get()}',
             XPath.source(item).query("//img/@src").get(),
-            XPath.source(item).query(
-                "//div[@class='songInfo']/span[@class='artist']/text()").get(),
-            XPath.source(item).query(
-                "//div[@class='songInfo']/span[@class='song']/text()").get());
+            XPath.source(item)
+                .query("//div[@class='songInfo']/span[@class='artist']/text()")
+                .get(),
+            XPath.source(item)
+                .query("//div[@class='songInfo']/span[@class='song']/text()")
+                .get());
 
         if (song.valid) {
           items.add(song);
@@ -146,20 +148,51 @@ class Api {
     if (response.statusCode == 200) {
       for (var item in XPath.source(response.body)
           .query(
-          "//div[@id='trending_featured_latest']/div/div[@class='tabs-content']/div[@id='panel2-2']/div/div")
+              "//div[@id='trending_featured_latest']/div/div[@class='tabs-content']/div[@id='panel2-2']/div/div")
           .list()) {
         var song = Song(
             '$baseUrl${XPath.source(item).query("//div/a/@href").get()}',
             XPath.source(item).query("//img/@src").get(),
-            XPath.source(item).query(
-                "//div[@class='songInfo']/span[@class='artist']/text()").get(),
-            XPath.source(item).query(
-                "//div[@class='songInfo']/span[@class='song']/text()").get());
+            XPath.source(item)
+                .query("//div[@class='songInfo']/span[@class='artist']/text()")
+                .get(),
+            XPath.source(item)
+                .query("//div[@class='songInfo']/span[@class='song']/text()")
+                .get());
 
         if (song.valid) {
           items.add(song);
         }
       }
+    }
+
+    return Future.value(items);
+  }
+
+  Future<List<Song>> _unsafeSearchMusic(String query) async {
+    List<Song> items = List();
+
+    var response = await http.get('$baseUrl/search?query=$query');
+    if (response.statusCode == 200) {
+      XPath.source(response.body)
+          .query(
+              "//div[@class='category']/div[@class='grid']/div[@class='itemContainer']")
+          .list()
+          .forEach((item) {
+        var song = Song(
+            '$baseUrl${XPath.source(item).query("//div/a/@href").get()}',
+            XPath.source(item).query("//img/@src").get(),
+            XPath.source(item)
+                .query(
+                    "//div[@class='song_info']/span[@class='artist_name']/text()")
+                .get(),
+            XPath.source(item)
+                .query(
+                    "//div[@class='song_info']/span[@class='song_name']/text()")
+                .get());
+
+        items.add(song);
+      });
     }
 
     return Future.value(items);
@@ -183,5 +216,9 @@ class Api {
 
   Future<List<Song>> featuredMusics() async {
     return _wrapExecution(() => _unsafeFeaturedMusics());
+  }
+
+  Future<List<Song>> searchMusic(String query) {
+    return _wrapExecution(() => _unsafeSearchMusic(query));
   }
 }

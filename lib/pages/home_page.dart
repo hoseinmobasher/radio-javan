@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_search_bar/flutter_search_bar.dart';
+import 'package:radio_javan/pages/search_page.dart';
 import 'package:radio_javan/pages/tabs/music_tab.dart';
 import 'package:radio_javan/pages/tabs/playlist_tab.dart';
 import 'package:radio_javan/pages/tabs/queue_tab.dart';
@@ -12,7 +14,33 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  SearchBar _searchBar;
   TabController _controller;
+
+  _HomePageState() {
+    _searchBar = new SearchBar(
+      inBar: false,
+      buildDefaultAppBar: (context) => AppBar(
+        title: Image.asset('assets/images/logo.png', height: 32),
+        actions: [_searchBar.getSearchAction(context)],
+      ),
+      setState: setState,
+      onSubmitted: onSubmitted,
+      onCleared: () {
+        print("cleared");
+      },
+      onClosed: () {
+        print("closed");
+      },
+    );
+  }
+
+  void onSubmitted(String query) async {
+    await Navigator.of(_scaffoldKey.currentContext)
+        .pushNamed(SearchPage.routeName, arguments: query);
+  }
 
   @override
   void initState() {
@@ -23,9 +51,8 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Image.asset('assets/images/logo.png', height: 32),
-      ),
+      key: _scaffoldKey,
+      appBar: _searchBar.build(context),
       body: TabBarView(
         controller: _controller,
         children: [PlaylistTab(), MusicTab(), QueueTab()],
