@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:radio_javan/api/api.dart';
 import 'package:radio_javan/domain/song.dart';
 import 'package:radio_javan/provider/queue_provider.dart';
@@ -112,44 +113,21 @@ class DialogUtils {
         });
   }
 
-  void showDownloadDialog(context, provider, item) async {
-    await showDialog(
+  void showDownloadDialog(context, item) {
+    showDialog(
         context: context,
-        builder: (context) {
-          return SimpleDialog(
-              title: Text(
-                'Download Item',
-                style: Theme.of(context).textTheme.subtitle1,
-              ),
+        barrierDismissible: false,
+        builder: (context) => SimpleDialog(
               children: [
-                FutureBuilder(
-                    future: Api.instance.musicPath(item.url),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState != ConnectionState.done) {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      } else {
-                        return Center(
-                            child: Flex(
-                          direction: Axis.horizontal,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            OutlineButton(
-                              child: Text('Download'),
-                              onPressed: () async {
-                                if (await canLaunch(snapshot.data)) {
-                                  await launch(snapshot.data);
-                                }
+                Center(child: Lottie.asset("assets/lottie/speakers-music.json"))
+              ],
+            ));
 
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        ));
-                      }
-                    })
-              ]);
-        });
+    Api.instance
+        .musicPath(item.url)
+        .then((value) async => {
+              if (await canLaunch(value)) {launch(value)}
+            })
+        .whenComplete(() => Navigator.pop(context));
   }
 }

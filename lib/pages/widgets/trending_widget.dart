@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -39,6 +40,8 @@ class _TrendingWidgetState extends State<TrendingWidget>
 
   @override
   Widget build(BuildContext context) {
+    var provider = Provider.of<QueueProvider>(context);
+
     return SmartRefresher(
       header: WaterDropMaterialHeader(),
       controller: _refreshController,
@@ -48,23 +51,50 @@ class _TrendingWidgetState extends State<TrendingWidget>
         physics: ClampingScrollPhysics(),
         gridDelegate:
             SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
-        itemBuilder: (context, index) => GestureDetector(
-          onTap: () async {
-            var provider = Provider.of<QueueProvider>(context, listen: false);
-            DialogUtils.instance.showMusicDialog(context, provider, items[index]);
-          },
-          child: Hero(
-            tag: 'trending-music-${items[index].url}',
-            child: SizedBox(
-              child: Card(
-                elevation: 4.0,
-                child: CachedNetworkImage(
-                  imageUrl: items[index].image,
-                  placeholder: (context, url) =>
-                      Lottie.asset("assets/lottie/speakers-music.json"),
+        itemBuilder: (context, index) => Hero(
+          tag: 'trending-music-${items[index].url}',
+          child: Stack(
+            children: [
+              SizedBox(
+                child: Card(
+                  elevation: 4.0,
+                  child: CachedNetworkImage(
+                    imageUrl: items[index].image,
+                    placeholder: (context, url) =>
+                        Lottie.asset("assets/lottie/speakers-music.json"),
+                  ),
                 ),
               ),
-            ),
+              Container(
+                alignment: Alignment.topRight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.add_circle_outlined,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        provider.add(items[index]);
+                        EasyLoading.showSuccess(
+                            '${items[index].song} added to library.');
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.download_outlined,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        DialogUtils.instance
+                            .showDownloadDialog(context, items[index]);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
         itemCount: items.length,

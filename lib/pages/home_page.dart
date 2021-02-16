@@ -1,3 +1,4 @@
+import 'package:ff_navigation_bar/ff_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_search_bar/flutter_search_bar.dart';
 import 'package:radio_javan/pages/search_page.dart';
@@ -51,7 +52,7 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     super.initState();
-    _controller = TabController(length: 3, initialIndex: 0, vsync: this);
+    _controller = TabController(length: 3, initialIndex: 1, vsync: this);
   }
 
   @override
@@ -63,46 +64,36 @@ class _HomePageState extends State<HomePage>
         controller: _controller,
         children: [PlaylistTab(), MusicTab(), QueueTab()],
       ),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-              tooltip: 'Playlists',
-              icon: Icon(
-                Icons.library_music_outlined,
-                color: _controller.index == 0 ? Colors.red : Colors.black,
-              ),
-              onPressed: () {
-                _controller.index = 0;
-                setState(() {});
-              },
-            ),
-            IconButton(
-              tooltip: 'Musics',
-              icon: Icon(
-                Icons.music_note_outlined,
-                color: _controller.index == 1 ? Colors.red : Colors.black,
-              ),
-              onPressed: () {
-                _controller.index = 1;
-                setState(() {});
-              },
-            ),
-            IconButton(
-              tooltip: 'My Library',
-              icon: Icon(
-                Icons.my_library_music_rounded,
-                color: _controller.index == 2 ? Colors.red : Colors.black,
-              ),
-              onPressed: () {
-                _controller.index = 2;
-                setState(() {});
-              },
-            )
-          ],
-        ),
+      bottomNavigationBar: FFNavigationBar(
+        theme: FFNavigationBarTheme(
+            barBackgroundColor: Colors.white,
+            selectedItemBorderColor: Colors.redAccent,
+            selectedItemBackgroundColor: Colors.redAccent,
+            selectedItemIconColor: Colors.white,
+            selectedItemLabelColor: Colors.red,
+            unselectedItemIconColor: Colors.black,
+            unselectedItemLabelColor: Colors.black,
+            selectedItemTextStyle: Theme.of(context).textTheme.bodyText1,
+            unselectedItemTextStyle: Theme.of(context).textTheme.bodyText2),
+        selectedIndex: _controller.index,
+        onSelectTab: (index) {
+          _controller.index = index;
+          setState(() {});
+        },
+        items: [
+          FFNavigationBarItem(
+            iconData: Icons.library_music_outlined,
+            label: 'Playlists',
+          ),
+          FFNavigationBarItem(
+            iconData: Icons.music_note_outlined,
+            label: 'Musics',
+          ),
+          FFNavigationBarItem(
+            iconData: Icons.queue_music_outlined,
+            label: 'Queue',
+          )
+        ],
       ),
     );
   }
