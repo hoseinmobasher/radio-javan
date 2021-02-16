@@ -36,7 +36,7 @@ class _SearchPageState extends State<SearchPage> {
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
             return Center(
-                child: Lottie.asset("assets/lottie/trumpet-music.json"));
+                child: Lottie.asset("assets/lottie/entry-search.json"));
           }
 
           var items = snapshot.data;

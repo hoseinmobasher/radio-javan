@@ -34,56 +34,56 @@ class _QueueTabState extends State<QueueTab>
   Widget build(BuildContext context) {
     return Consumer<QueueProvider>(builder: (context, value, child) {
       return Scaffold(
-        bottomSheet: ButtonBar(
-          alignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-              onPressed: () => _mediaActionPressed(value, MusicAction.PREVIOUS),
-              icon: Icon(
-                Icons.skip_previous_outlined,
-                color: value.action == MusicAction.PREVIOUS
-                    ? Colors.red
-                    : Colors.black,
-              ),
-            ),
-            IconButton(
-              onPressed: () => _mediaActionPressed(value, MusicAction.PAUSE),
-              icon: Icon(
-                Icons.pause_outlined,
-                color: value.action == MusicAction.PAUSE
-                    ? Colors.red
-                    : Colors.black,
-              ),
-            ),
-            IconButton(
-              onPressed: () => _mediaActionPressed(value, MusicAction.PLAY),
-              icon: Icon(
-                Icons.play_arrow_outlined,
-                color: value.action == MusicAction.PLAY
-                    ? Colors.red
-                    : Colors.black,
-              ),
-            ),
-            IconButton(
-              onPressed: () => _mediaActionPressed(value, MusicAction.STOP),
-              icon: Icon(
-                Icons.stop_outlined,
-                color: value.action == MusicAction.STOP
-                    ? Colors.red
-                    : Colors.black,
-              ),
-            ),
-            IconButton(
-              onPressed: () => _mediaActionPressed(value, MusicAction.NEXT),
-              icon: Icon(
-                Icons.skip_next_outlined,
-                color: value.action == MusicAction.NEXT
-                    ? Colors.red
-                    : Colors.black,
-              ),
-            )
-          ],
-        ),
+        // bottomSheet: ButtonBar(
+        //   alignment: MainAxisAlignment.spaceAround,
+        //   children: [
+        //     IconButton(
+        //       onPressed: () => _mediaActionPressed(value, MusicAction.PREVIOUS),
+        //       icon: Icon(
+        //         Icons.skip_previous_outlined,
+        //         color: value.action == MusicAction.PREVIOUS
+        //             ? Colors.red
+        //             : Colors.black,
+        //       ),
+        //     ),
+        //     IconButton(
+        //       onPressed: () => _mediaActionPressed(value, MusicAction.PAUSE),
+        //       icon: Icon(
+        //         Icons.pause_outlined,
+        //         color: value.action == MusicAction.PAUSE
+        //             ? Colors.red
+        //             : Colors.black,
+        //       ),
+        //     ),
+        //     IconButton(
+        //       onPressed: () => _mediaActionPressed(value, MusicAction.PLAY),
+        //       icon: Icon(
+        //         Icons.play_arrow_outlined,
+        //         color: value.action == MusicAction.PLAY
+        //             ? Colors.red
+        //             : Colors.black,
+        //       ),
+        //     ),
+        //     IconButton(
+        //       onPressed: () => _mediaActionPressed(value, MusicAction.STOP),
+        //       icon: Icon(
+        //         Icons.stop_outlined,
+        //         color: value.action == MusicAction.STOP
+        //             ? Colors.red
+        //             : Colors.black,
+        //       ),
+        //     ),
+        //     IconButton(
+        //       onPressed: () => _mediaActionPressed(value, MusicAction.NEXT),
+        //       icon: Icon(
+        //         Icons.skip_next_outlined,
+        //         color: value.action == MusicAction.NEXT
+        //             ? Colors.red
+        //             : Colors.black,
+        //       ),
+        //     )
+        //   ],
+        // ),
         body: ListView.builder(
           itemBuilder: (context, index) {
             return Card(

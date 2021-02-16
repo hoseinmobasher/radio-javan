@@ -118,6 +118,10 @@ class DialogUtils {
         context: context,
         barrierDismissible: false,
         builder: (context) => SimpleDialog(
+              title: Text(
+                'Fetching song URL...',
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
               children: [
                 Center(child: Lottie.asset("assets/lottie/speakers-music.json"))
               ],

@@ -33,9 +33,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (items.isEmpty) {
-      return Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
+    // if (items.isEmpty) {
+    //   return Scaffold(body: Center(child: CircularProgressIndicator()));
+    // }
 
     var provider = Provider.of<QueueProvider>(context, listen: false);
 
@@ -44,85 +44,96 @@ class _PlaylistPageState extends State<PlaylistPage> {
         slivers: [
           SliverAppBar(
             flexibleSpace: FlexibleSpaceBar(
-              background: CachedNetworkImage(
-                fit: BoxFit.cover,
-                imageUrl: widget._item.image,
+              background: Hero(
+                tag: 'playlist-${widget._item.url}',
+                child: CachedNetworkImage(
+                  fit: BoxFit.cover,
+                  imageUrl: widget._item.image,
+                ),
               ),
             ),
             floating: true,
             expandedHeight: 200,
           ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate((context, index) {
-              return Card(
-                child: Flex(
-                  direction: Axis.horizontal,
-                  children: [
-                    Flexible(
-                      flex: 3,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: CachedNetworkImage(
-                          imageUrl: items[index].image,
-                          placeholder: (context, url) => Lottie.asset(
-                              "assets/lottie/speakers-music.json"),
-                          height: 64,
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 6,
-                      fit: FlexFit.tight,
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Flex(
-                          direction: Axis.vertical,
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Flexible(
-                              child: Text(items[index].artist,
-                                  overflow: TextOverflow.ellipsis,
-                                  style:
-                                      Theme.of(context).textTheme.subtitle1),
+          items?.length == 0
+              ? SliverToBoxAdapter(
+                  child: Center(
+                    child: Lottie.asset("assets/lottie/searching-for-word.json"),
+                  ),
+                )
+              : SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    return Card(
+                      child: Flex(
+                        direction: Axis.horizontal,
+                        children: [
+                          Flexible(
+                            flex: 3,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: CachedNetworkImage(
+                                imageUrl: items[index].image,
+                                placeholder: (context, url) => Lottie.asset(
+                                    "assets/lottie/speakers-music.json"),
+                                height: 64,
+                              ),
                             ),
-                            Flexible(
-                              child: Text(items[index].song,
-                                  overflow: TextOverflow.ellipsis,
-                                  style:
-                                      Theme.of(context).textTheme.subtitle2),
+                          ),
+                          Flexible(
+                            flex: 6,
+                            fit: FlexFit.tight,
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Flex(
+                                direction: Axis.vertical,
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Flexible(
+                                    child: Text(items[index].artist,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .subtitle1),
+                                  ),
+                                  Flexible(
+                                    child: Text(items[index].song,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .subtitle2),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
+                          ),
+                          Flexible(
+                            flex: 1,
+                            child: IconButton(
+                              icon: Icon(Icons.download_outlined),
+                              onPressed: () async {
+                                DialogUtils.instance
+                                    .showDownloadDialog(context, items[index]);
+                              },
+                            ),
+                          ),
+                          Flexible(
+                            flex: 1,
+                            child: IconButton(
+                              icon: Icon(Icons.add_circle_outlined),
+                              onPressed: () async {
+                                provider.add(items[index]);
+                                EasyLoading.showSuccess(
+                                    '${items[index].song} added to library.');
+                              },
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: IconButton(
-                        icon: Icon(Icons.download_outlined),
-                        onPressed: () async {
-                          DialogUtils.instance
-                              .showDownloadDialog(context, items[index]);
-                        },
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: IconButton(
-                        icon: Icon(Icons.add_circle_outlined),
-                        onPressed: () async {
-                          provider.add(items[index]);
-                          EasyLoading.showSuccess(
-                              '${items[index].song} added to library.');
-                        },
-                      ),
-                    ),
-                  ],
+                    );
+                  }, childCount: items.length),
                 ),
-              );
-            }, childCount: items.length),
-          ),
         ],
       ),
     );
