@@ -30,11 +30,28 @@ class RJApp extends StatelessWidget {
       child: MaterialApp(
           title: 'Radio Javan',
           theme: ThemeData(
-            brightness: Brightness.light,
-            primarySwatch: Colors.lightGreen,
-            visualDensity: VisualDensity.adaptivePlatformDensity,
-            textTheme: GoogleFonts.latoTextTheme(),
-          ),
+              brightness: Brightness.light,
+              primarySwatch: Colors.red,
+              visualDensity: VisualDensity.adaptivePlatformDensity,
+              appBarTheme: AppBarTheme(
+                color: Colors.white,
+                elevation: 0,
+                textTheme: Theme.of(context).textTheme
+              ),
+              textTheme: GoogleFonts.latoTextTheme().merge(TextTheme(
+                bodyText1: TextStyle(color: Colors.black),
+                bodyText2: TextStyle(color: Colors.black),
+                button: TextStyle(color: Colors.black),
+                caption: TextStyle(color: Colors.black),
+                headline1: TextStyle(color: Colors.black),
+                headline2: TextStyle(color: Colors.black),
+                headline3: TextStyle(color: Colors.black),
+                headline4: TextStyle(color: Colors.black),
+                headline5: TextStyle(color: Colors.black),
+                headline6: TextStyle(color: Colors.black),
+                subtitle1: TextStyle(color: Colors.black),
+                subtitle2: TextStyle(color: Colors.black),
+              ))),
           onGenerateRoute: (settings) {
             final routes = <String, WidgetBuilder>{
               HomePage.routeName: (ctx) => HomePage(),

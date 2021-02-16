@@ -7,8 +7,9 @@ class QueueProvider extends ChangeNotifier {
   List<Song> _items = List();
   MusicAction _action = MusicAction.STOP;
 
-  init() async =>
-      SongProvider.instance.findAll().then((items) => _items.addAll(items));
+  init() async {
+    return SongProvider.instance.findAll().then((items) => _items.addAll(items));
+  }
 
   add(item) async {
     if (_items.any((_item) => _item.url == item.url)) {

@@ -111,4 +111,45 @@ class DialogUtils {
               ]);
         });
   }
+
+  void showDownloadDialog(context, provider, item) async {
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+              title: Text(
+                'Download Item',
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
+              children: [
+                FutureBuilder(
+                    future: Api.instance.musicPath(item.url),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState != ConnectionState.done) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        return Center(
+                            child: Flex(
+                          direction: Axis.horizontal,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            OutlineButton(
+                              child: Text('Download'),
+                              onPressed: () async {
+                                if (await canLaunch(snapshot.data)) {
+                                  await launch(snapshot.data);
+                                }
+
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        ));
+                      }
+                    })
+              ]);
+        });
+  }
 }

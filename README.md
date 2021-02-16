@@ -28,6 +28,8 @@ In this application, I am using following plugins:
     - To interact with media service.
 -   sqflite: ^1.3.2+3
     - Save and load user specific data (music queue, etc) into database.
+-    flutter_search_bar: ^2.1.0
+     - Add search bar to home page.
 
 
 ## Getting Started

@@ -179,17 +179,36 @@ class Api {
               "//div[@class='category']/div[@class='grid']/div[@class='itemContainer']")
           .list()
           .forEach((item) {
+        var artistName, songName;
+        if (XPath.source(item)
+                .query("//div[@class='songInfo']")
+                .list()
+                .length !=
+            0) {
+          artistName = XPath.source(item)
+              .query("//div[@class='songInfo']/span[@class='artist']/text()")
+              .get();
+
+          songName = XPath.source(item)
+              .query("//div[@class='songInfo']/span[@class='song']/text()")
+              .get();
+        } else {
+          artistName = XPath.source(item)
+              .query(
+                  "//div[@class='song_info']/span[@class='artist_name']/text()")
+              .get();
+
+          songName = XPath.source(item)
+              .query(
+                  "//div[@class='song_info']/span[@class='song_name']/text()")
+              .get();
+        }
+
         var song = Song(
             '$baseUrl${XPath.source(item).query("//div/a/@href").get()}',
             XPath.source(item).query("//img/@src").get(),
-            XPath.source(item)
-                .query(
-                    "//div[@class='song_info']/span[@class='artist_name']/text()")
-                .get(),
-            XPath.source(item)
-                .query(
-                    "//div[@class='song_info']/span[@class='song_name']/text()")
-                .get());
+            artistName,
+            songName);
 
         items.add(song);
       });

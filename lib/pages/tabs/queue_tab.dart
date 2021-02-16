@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:radio_javan/provider/queue_provider.dart';
 import 'package:radio_javan/types/music_action.dart';
 import 'package:radio_javan/utils/dialog_utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class QueueTab extends StatefulWidget {
   @override
@@ -34,81 +35,82 @@ class _QueueTabState extends State<QueueTab>
   Widget build(BuildContext context) {
     return Consumer<QueueProvider>(builder: (context, value, child) {
       return Scaffold(
-        bottomSheet: ButtonBar(
-          alignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-              onPressed: () => _mediaActionPressed(value, MusicAction.PREVIOUS),
-              icon: Icon(
-                Icons.skip_previous_outlined,
-                color: value.action == MusicAction.PREVIOUS
-                    ? Colors.red
-                    : Colors.black,
-              ),
-            ),
-            IconButton(
-              onPressed: () => _mediaActionPressed(value, MusicAction.PAUSE),
-              icon: Icon(
-                Icons.pause_outlined,
-                color: value.action == MusicAction.PAUSE
-                    ? Colors.red
-                    : Colors.black,
-              ),
-            ),
-            IconButton(
-              onPressed: () => _mediaActionPressed(value, MusicAction.PLAY),
-              icon: Icon(
-                Icons.play_arrow_outlined,
-                color: value.action == MusicAction.PLAY
-                    ? Colors.red
-                    : Colors.black,
-              ),
-            ),
-            IconButton(
-              onPressed: () => _mediaActionPressed(value, MusicAction.STOP),
-              icon: Icon(
-                Icons.stop_outlined,
-                color: value.action == MusicAction.STOP
-                    ? Colors.red
-                    : Colors.black,
-              ),
-            ),
-            IconButton(
-              onPressed: () => _mediaActionPressed(value, MusicAction.NEXT),
-              icon: Icon(
-                Icons.skip_next_outlined,
-                color: value.action == MusicAction.NEXT
-                    ? Colors.red
-                    : Colors.black,
-              ),
-            )
-          ],
-        ),
+        // bottomSheet: ButtonBar(
+        //   alignment: MainAxisAlignment.spaceAround,
+        //   children: [
+        //     IconButton(
+        //       onPressed: () => _mediaActionPressed(value, MusicAction.PREVIOUS),
+        //       icon: Icon(
+        //         Icons.skip_previous_outlined,
+        //         color: value.action == MusicAction.PREVIOUS
+        //             ? Colors.red
+        //             : Colors.black,
+        //       ),
+        //     ),
+        //     IconButton(
+        //       onPressed: () => _mediaActionPressed(value, MusicAction.PAUSE),
+        //       icon: Icon(
+        //         Icons.pause_outlined,
+        //         color: value.action == MusicAction.PAUSE
+        //             ? Colors.red
+        //             : Colors.black,
+        //       ),
+        //     ),
+        //     IconButton(
+        //       onPressed: () => _mediaActionPressed(value, MusicAction.PLAY),
+        //       icon: Icon(
+        //         Icons.play_arrow_outlined,
+        //         color: value.action == MusicAction.PLAY
+        //             ? Colors.red
+        //             : Colors.black,
+        //       ),
+        //     ),
+        //     IconButton(
+        //       onPressed: () => _mediaActionPressed(value, MusicAction.STOP),
+        //       icon: Icon(
+        //         Icons.stop_outlined,
+        //         color: value.action == MusicAction.STOP
+        //             ? Colors.red
+        //             : Colors.black,
+        //       ),
+        //     ),
+        //     IconButton(
+        //       onPressed: () => _mediaActionPressed(value, MusicAction.NEXT),
+        //       icon: Icon(
+        //         Icons.skip_next_outlined,
+        //         color: value.action == MusicAction.NEXT
+        //             ? Colors.red
+        //             : Colors.black,
+        //       ),
+        //     )
+        //   ],
+        // ),
         body: ListView.builder(
           itemBuilder: (context, index) {
             return GestureDetector(
-              onTap: () async {
-                DialogUtils.instance
-                    .showQueueDialog(context, value, value.items[index]);
-              },
+              // onTap: () async {
+              //   DialogUtils.instance
+              //       .showQueueDialog(context, value, value.items[index]);
+              // },
               child: Card(
                 child: Flex(
                   direction: Axis.horizontal,
                   children: [
                     Flexible(
-                      flex: 1,
+                      flex: 3,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: CachedNetworkImage(
                           imageUrl: value.items[index].image,
                           placeholder: (context, url) =>
                               Lottie.asset("assets/lottie/speakers-music.json"),
-                          height: 100,
+                          height: 64,
                         ),
                       ),
                     ),
                     Flexible(
-                      flex: 2,
+                      flex: 6,
+                      fit: FlexFit.tight,
                       child: Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Flex(
@@ -130,7 +132,38 @@ class _QueueTabState extends State<QueueTab>
                           ],
                         ),
                       ),
-                    )
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: IconButton(
+                        icon: Icon(Icons.remove_red_eye_outlined),
+                        onPressed: () async {
+                          if (await canLaunch(value.items[index].url)) {
+                            await launch(value.items[index].url);
+                          }
+                        },
+                      ),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: IconButton(
+                        icon: Icon(Icons.download_outlined),
+                        onPressed: () async {
+                          DialogUtils.instance.showDownloadDialog(
+                              context, value, value.items[index]);
+                        },
+                      ),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: IconButton(
+                        icon: Icon(Icons.remove_outlined),
+                        onPressed: () async {
+                          value.remove(value.items[index]);
+                          setState(() {});
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ),

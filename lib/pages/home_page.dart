@@ -23,17 +23,23 @@ class _HomePageState extends State<HomePage>
     _searchBar = new SearchBar(
       inBar: false,
       buildDefaultAppBar: (context) => AppBar(
-        title: Image.asset('assets/images/logo.png', height: 32),
-        actions: [_searchBar.getSearchAction(context)],
+        title: Text('Radio Javan'),
+        centerTitle: true,
+        // actions: [_searchBar.getSearchAction(context)],
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.search,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              _searchBar.beginSearch(context);
+            },
+          )
+        ],
       ),
       setState: setState,
       onSubmitted: onSubmitted,
-      onCleared: () {
-        print("cleared");
-      },
-      onClosed: () {
-        print("closed");
-      },
     );
   }
 
