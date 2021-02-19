@@ -84,74 +84,84 @@ class _QueueTabState extends State<QueueTab>
         //     )
         //   ],
         // ),
-        body: ListView.builder(
-          itemBuilder: (context, index) {
-            return Card(
-              child: Flex(
-                direction: Axis.horizontal,
-                children: [
-                  Flexible(
-                    flex: 3,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: CachedNetworkImage(
-                        imageUrl: value.items[index].image,
-                        placeholder: (context, url) =>
-                            Lottie.asset("assets/lottie/speakers-music.json"),
-                        height: 64,
-                      ),
-                    ),
-                  ),
-                  Flexible(
-                    flex: 6,
-                    fit: FlexFit.tight,
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Flex(
-                        direction: Axis.vertical,
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Flexible(
-                            child: Text(value.items[index].artist,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.subtitle1),
+        body: CustomScrollView(
+          slivers: [
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return Card(
+                    child: Flex(
+                      direction: Axis.horizontal,
+                      children: [
+                        Flexible(
+                          flex: 3,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: CachedNetworkImage(
+                              imageUrl: value.items[index].image,
+                              placeholder: (context, url) => Lottie.asset(
+                                  "assets/lottie/speakers-music.json"),
+                              height: 64,
+                            ),
                           ),
-                          Flexible(
-                            child: Text(value.items[index].song,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.subtitle2),
+                        ),
+                        Flexible(
+                          flex: 6,
+                          fit: FlexFit.tight,
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Flex(
+                              direction: Axis.vertical,
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  child: Text(value.items[index].artist,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .subtitle1),
+                                ),
+                                Flexible(
+                                  child: Text(value.items[index].song,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .subtitle2),
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: IconButton(
+                            icon: Icon(Icons.download_outlined),
+                            onPressed: () async {
+                              DialogUtils.instance.showDownloadDialog(
+                                  context, value.items[index]);
+                            },
+                          ),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: IconButton(
+                            icon: Icon(Icons.remove_circle_outlined),
+                            onPressed: () async {
+                              value.remove(value.items[index]);
+                              setState(() {});
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  Flexible(
-                    flex: 1,
-                    child: IconButton(
-                      icon: Icon(Icons.download_outlined),
-                      onPressed: () async {
-                        DialogUtils.instance
-                            .showDownloadDialog(context, value.items[index]);
-                      },
-                    ),
-                  ),
-                  Flexible(
-                    flex: 1,
-                    child: IconButton(
-                      icon: Icon(Icons.remove_circle_outlined),
-                      onPressed: () async {
-                        value.remove(value.items[index]);
-                        setState(() {});
-                      },
-                    ),
-                  ),
-                ],
+                  );
+                },
+                childCount: value.count,
               ),
-            );
-          },
-          itemCount: value.count,
+            ),
+          ],
         ),
       );
     });

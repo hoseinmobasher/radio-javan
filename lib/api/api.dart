@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:radio_javan/domain/playlist.dart';
@@ -10,7 +12,6 @@ class Api {
 
   static final Api instance = Api._();
   static final String baseUrl = "https://www.radiojavan.com";
-  static final String baseMediaUrl = "https://host2.rj-mw1.com/media";
 
   Future<T> _wrapExecution<T>(Function function) async {
     try {
@@ -88,7 +89,10 @@ class Api {
           RegExp currentMP3Url = RegExp("RJ\.currentMP3Url = '(.*)';");
           var match = currentMP3Url.firstMatch(script);
           if (match != null) {
-            path = '$baseMediaUrl/${match.group(1)}';
+            var id = RegExp("RJ\.currentMP3Perm = '(.*)';").firstMatch(script).group(1);
+            var baseMediaUrl = await songHost(id);
+
+            path = '$baseMediaUrl/media/${match.group(1)}';
           }
 
           RegExp currentMP3Type = RegExp("RJ\.currentMP3Type = '(.*)';");
@@ -239,5 +243,15 @@ class Api {
 
   Future<List<Song>> searchMusic(String query) {
     return _wrapExecution(() => _unsafeSearchMusic(query));
+  }
+
+  Future<String> songHost(String id) async {
+    var response = await http.post('$baseUrl/mp3s/mp3_host', body: {'id': id});
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['host'];
+    }
+
+    throw HttpException(response.body ?? 'URL could not be fetched.');
   }
 }
